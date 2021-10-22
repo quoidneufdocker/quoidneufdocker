@@ -1,0 +1,11 @@
+---
+header:
+  - name: Github Profile
+    icon: gblog_github
+    ref: "https://github.com/ndeloof"
+    external: true
+
+footer:
+  - name: Contact
+    icon: gblog_email
+    ref: "/contact"

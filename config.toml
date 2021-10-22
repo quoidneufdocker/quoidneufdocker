@@ -1,7 +1,0 @@
-baseURL = 'https://quoidneufdocker.fr/'
-languageCode = 'fr'
-title = "Quoi d'neuf Docker ?"
-theme = "hugo-geekblog"
-
-[Params]
-    mainSections = ["post"]

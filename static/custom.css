@@ -1,0 +1,28 @@
+.icon-grid {
+  width: 8rem;
+  height: 8rem;
+  margin: 0.2em;
+  text-align: center;
+  padding: 0.3em;
+}
+
+.icon-grid__line {
+  height: 4rem;
+}
+
+.icon-grid__line .icon {
+  font-size: 3em;
+}
+
+.icon-grid__line--text {
+  font-size: 0.8em;
+}
+
+.gblog-header{
+  color: #fdbb3b;
+  text-shadow: -2px 2px 1px black;
+  font-family:"Slackey",sans-serif;
+  background-image: url(background.png);
+  background-repeat: no-repeat;
+  background-position: center 0;
+}
