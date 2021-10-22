@@ -1,1 +1,9 @@
 /* You can add custom styles here. */
+.gblog-header{
+    color: #fdbb3b;
+    text-shadow: -2px 2px 1px black;
+    font-family:"Slackey",sans-serif;
+    background-image: url(background.png);
+    background-repeat: no-repeat;
+    background-position: center 0;
+}
