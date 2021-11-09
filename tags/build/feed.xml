@@ -1,6 +1,86 @@
-<?xml version="1.0" encoding="utf-8"?><feed xmlns="http://www.w3.org/2005/Atom" xml:lang="en"><generator uri="https://gohugo.io/" version="0.88.1">Hugo</generator><title type="html">Build on Quoi d'neuf Docker?</title><link href="https://hugo-geekblog.geekdocs.de/tags/build/" rel="alternate" type="text/html" title="HTML"/><link href="https://hugo-geekblog.geekdocs.de/tags/build/feed.xml" rel="self" type="application/atom+xml" title="Atom"/><link href="https://hugo-geekblog.geekdocs.de/tags/build/feed.json" rel="alternate" type="application/json" title="Json"/><updated>2021-10-23T09:26:19+00:00</updated><author><name>Nicolas De Loof</name><email>nicolas.deloof@gmail.com</email></author><id>https://hugo-geekblog.geekdocs.de/tags/build/</id><entry><title type="html">Docker build telemetry</title><link href="https://hugo-geekblog.geekdocs.de/posts/buildx_telemetry/?utm_source=atom_feed" rel="alternate" type="text/html" hreflang="en"/><id>https://hugo-geekblog.geekdocs.de/posts/buildx_telemetry/</id><published>2021-10-22T12:12:00+02:00</published><updated>2021-10-22T14:27:57+02:00</updated><content type="html"><![CDATA[<blockquote>
-<p>Garde toujours tes amis près de toi et tes enemis, encore plus près.</p>
-</blockquote>
-<p>&ndash; Al Pacino</p>
-<p>Comme beaucoup d&rsquo;entre vous, j&rsquo;ai pesté devant un <code>docker build</code> qui télécharge pour la 101ème fois les mêmes dépendances lors d&rsquo;un <code>apt install</code> ou d&rsquo;un <code>npm install</code> après avoir ajouté une ligne dans mon <code>package.json</code>.</p>
+<?xml version="1.0" encoding="utf-8"?><feed xmlns="http://www.w3.org/2005/Atom" xml:lang="en"><generator uri="https://gohugo.io/" version="0.89.2">Hugo</generator><title type="html">Build on Quoi d'neuf Docker?</title><link href="https://hugo-geekblog.geekdocs.de/tags/build/" rel="alternate" type="text/html" title="HTML"/><link href="https://hugo-geekblog.geekdocs.de/tags/build/feed.xml" rel="self" type="application/atom+xml" title="Atom"/><link href="https://hugo-geekblog.geekdocs.de/tags/build/feed.json" rel="alternate" type="application/json" title="Json"/><updated>2021-11-09T13:48:26+00:00</updated><author><name>Nicolas De Loof</name><email>nicolas.deloof@gmail.com</email></author><id>https://hugo-geekblog.geekdocs.de/tags/build/</id><entry><title type="html">Docker buil 101</title><link href="https://hugo-geekblog.geekdocs.de/posts/build_101/?utm_source=atom_feed" rel="alternate" type="text/html" hreflang="en"/><id>https://hugo-geekblog.geekdocs.de/posts/build_101/</id><published>2021-11-09T12:12:00+02:00</published><updated>2021-11-09T14:47:59+01:00</updated><content type="html"><![CDATA[<p>Comme beaucoup d&rsquo;entre vous, j&rsquo;ai pesté devant un <code>docker build</code> qui télécharge pour la 101ème fois les mêmes paquets <code>apt install</code> .</p>
+<p>Plutôt que de continuer à subir, je vous propose une série d&rsquo;articles de mieux comprendre <code>docker build</code> et d&rsquo;explorer quelques pistes pour le rendre plus efficace.</p>
+<p>Pour ce premier article, nous allons commencer par les bases.</p>
+<div class="gblog-post__anchorwrap">
+    <h2 id="back-to-basics">
+        back to basics
+        <a data-clipboard-text="https://hugo-geekblog.geekdocs.de/posts/build_101/#back-to-basics" class="gblog-post__anchor gblog-post__anchor--right clip" aria-label="Anchor back to basics" href="#back-to-basics">
+            <svg class="icon gblog_link"><use xlink:href="#gblog_link"></use></svg>
+        </a>
+    </h2>
+</div><p>Un image Docker est une succession de &ldquo;couches&rdquo; (<em>layers</em>) chacune représentant des modifications apportées au système de fichier. Chaque ligne du <code>Dockerfile</code> indique une directive qui va construire une nouvelle couche, qui va venir s&rsquo;empiler sur la précédente.</p>
+<p>Un postulat de Docker, c&rsquo;est qu&rsquo;une commande passée sur un état bien défini du système de fichier en cours de construction donnera toujours le même résultat. C&rsquo;est ce qui lui permet de ne pas rejouer l&rsquo;intégralité des commandes à chaque <code>docker build</code>, mais juste ce qui a été modifié.</p>
+<p>Voilà; maintenant, tout ça ne vient pas sans quelques impacts&hellip;</p>
+<div class="gblog-post__anchorwrap">
+    <h2 id="apt-quoi">
+        apt-quoi?
+        <a data-clipboard-text="https://hugo-geekblog.geekdocs.de/posts/build_101/#apt-quoi" class="gblog-post__anchor gblog-post__anchor--right clip" aria-label="Anchor apt-quoi?" href="#apt-quoi">
+            <svg class="icon gblog_link"><use xlink:href="#gblog_link"></use></svg>
+        </a>
+    </h2>
+</div><p>Les premières commandes d&rsquo;un <code>Dockerfile</code> sont généralement du type:</p>
+<pre tabindex="0"><code>FROM ubuntu
+RUN apt update &amp;&amp; apt install machin bidule chose
+</code></pre><p>Il est rarissime de tomber sur un <code>Dockerfile</code> dans lequel les dépendances système incluent une version exacte du paquet à installer. C&rsquo;est bien et pas bien à la fois</p>
+<ol>
+<li>Si on reconstruit l&rsquo;image depuis un environnemnt tout neuf, on aura les dépendances système à jour sans devoir courrir après les derniers numéros de version et toucher au Dockerfile.</li>
+<li>Si on a déjà cette commande en cache, on restera sur des dépendances devenues obsolètes</li>
+</ol>
+<p>Il va donc faloir trouver un compromis &hellip; je suggère de faire un <code>docker build --no-cache</code> de temps en temps, genre chaque Lundi pendant la pause déjeuner, et je vous laisse le soin de construire un joli workflow de mise à jour sur cette base :P</p>
+<p>A titre personnel, je trouverai plus &ldquo;propre&rdquo; de mettre des versions aux dépendances système, et d&rsquo;avoir un outil de type <em>vulnerability scanner</em> qui m&rsquo;informe qu&rsquo;un paquet plus récent existe, ou plutôt qui me fait une Pull-Request en mode dependabot pour rafraîchir mon Dockerfile&hellip; bref</p>
+<div class="gblog-post__anchorwrap">
+    <h2 id="tes-là-où-tes-pas-là">
+        t&rsquo;es là où t&rsquo;es pas là?
+        <a data-clipboard-text="https://hugo-geekblog.geekdocs.de/posts/build_101/#tes-là-où-tes-pas-là" class="gblog-post__anchor gblog-post__anchor--right clip" aria-label="Anchor t&rsquo;es là où t&rsquo;es pas là?" href="#tes-l%c3%a0-o%c3%b9-tes-pas-l%c3%a0">
+            <svg class="icon gblog_link"><use xlink:href="#gblog_link"></use></svg>
+        </a>
+    </h2>
+</div><p>Rien à voir avec <a class="gblog-markdown__link" href="https://www.youtube.com/watch?v=4LyVjNwLabk">les Tuches</a>. Du fait de l&rsquo;empilement des couches, une <em>suppression</em> n&rsquo;en est pas réellement une. Un fichier supprimé est bien absent du système de fichier final, mais il existe dans les couches intermédiaires et alourdit l&rsquo;image.</p>
+<p>Résultat, vous verrez un peu partout ce genre de chose:</p>
+<pre tabindex="0"><code>RUN apt-get update \
+  &amp;&amp; apt-get install -y --no-install-recommends machin 
+  &amp;&amp; apt-get clean \
+  &amp;&amp; rm -rf /var/lib/apt/lists/*
+</code></pre><p>Ce mix de commande installe un paquet système, après avoir mis à jour les métadonnées, puis fait le ménage des divers caches pour ne pas embarquer de fichiers inutiles dans la couche en cours de construction. C&rsquo;est bien optimisé tout ça, mais bye bye la lisibilibté!</p>
+<p>La <a class="gblog-markdown__link" href="https://github.com/moby/buildkit/blob/master/frontend/dockerfile/docs/syntax.md#here-documents">syntaxe proposée</a> (à titre experimental) par BuildKit sous forme de &ldquo;<a class="gblog-markdown__link" href="https://fr.wikipedia.org/wiki/Here_document">here-document</a>&rdquo; nous économise les <code>\</code> et autres <code>&amp;&amp;</code> mais bon, le problème reste assez présent:</p>
+<pre tabindex="0"><code># syntax = docker/dockerfile:1.3-labs
+...
+RUN &lt;&lt;eof
+    apt-get update
+    apt-get install -y --no-install-recommends machin 
+    apt-get clean 
+    rm -rf /var/lib/apt/lists/*
+eof    
+</code></pre><div class="gblog-post__anchorwrap">
+    <h2 id="cache-invalidation">
+        cache invalidation
+        <a data-clipboard-text="https://hugo-geekblog.geekdocs.de/posts/build_101/#cache-invalidation" class="gblog-post__anchor gblog-post__anchor--right clip" aria-label="Anchor cache invalidation" href="#cache-invalidation">
+            <svg class="icon gblog_link"><use xlink:href="#gblog_link"></use></svg>
+        </a>
+    </h2>
+</div><p>L&rsquo;invalidation des caches est l&rsquo;un des problèmes les plus complexe de notre industrie, avec le nommage des variables.</p>
+<p>Dans le cas d&rsquo;un <code>Dockerfile</code>, <code>docker build</code> doit savoir quel layer reconstruire et lequel peut être utilisé tel quel depuis le cache. Là où ça devient compliqué c&rsquo;est quand il doit ajouter du contentu externe à l&rsquo;image.</p>
+<p>Historiquement nous avions la directive <code>ADD</code>. Bon, oubliez là tout de suite. Elle permet de télécharger un truc pour mettre dans l&rsquo;image, mais du coup, comment savoir s&rsquo;il faut re-télécharger? Faudrait il respected les headers HTTP &ldquo;Last-Modified&rdquo;? Amusez vous à lire dans les issues Docker les kilomètre de débats sur ce sujet.</p>
+<p>La commande <code>COPY</code> permet d&rsquo;inclure un fichier local dans l&rsquo;image. Ici c&rsquo;est plus simple, si le fichier est le même, le résultat sera (devrait être?) le même, et le cache n&rsquo;est pas invalidé. S&rsquo;il est modifié, plus rien n&rsquo;est sur, le cache est invalide et toutes les commandes à suivre doivent être rejouées.</p>
+<p>Et c&rsquo;est pour ça qu&rsquo;on évite ce genre de choses:</p>
+<pre tabindex="0"><code>FROM maven
+COPY . /work
+RUN mvn package
+</code></pre><p>En faisant ça, le moindre changement d&rsquo;un fichier dans le projet va relancer un build maven complet, avec les 200Mo de téléchargements que cela implique.<br>
+On vous recommandra donc des choses nettement plus élaborées, comme:</p>
+<pre tabindex="0"><code>COPY pom.xml /work
+RUN mvn dependency:go-offline
+COPY . /work
+RUN mvn package
+</code></pre><p>Cette astuce permet de lier l&rsquo;étape de téléchargement des dépendances au seul fichier de description du projet (<code>pom.xml</code>, <code>package.json</code>, <code>Gemfile</code>, etc). Tant que celui-ci n&rsquo;est pas modifié, seul le second <code>COPY</code> va invalider le cache.</p>
+<p>Je crois sincèrement que c&rsquo;est ce qui a propulsé la commande Maven <code>dependency:go-offline</code> bien au delà de son cas d&rsquo;usage initial qui était &ldquo;je vais bosser dans le TGV&rdquo; à une époque ou le Wifi à bord tennait de la science fiction.</p>
+<div class="gblog-post__anchorwrap">
+    <h2 id="to-be-continued">
+        to be continued&hellip;
+        <a data-clipboard-text="https://hugo-geekblog.geekdocs.de/posts/build_101/#to-be-continued" class="gblog-post__anchor gblog-post__anchor--right clip" aria-label="Anchor to be continued&hellip;" href="#to-be-continued">
+            <svg class="icon gblog_link"><use xlink:href="#gblog_link"></use></svg>
+        </a>
+    </h2>
+</div><p>On va en rester là pour ce premier article, il reste beaucoup à dire, mais on va prendre le temps de s&rsquo;attaquer a chaque sujet séparément.<br>
+A+</p>
 ]]></content><category scheme="https://hugo-geekblog.geekdocs.de/tags/build" term="build" label="Build"/></entry></feed>

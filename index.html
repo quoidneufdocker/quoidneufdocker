@@ -1,6 +1,6 @@
 <!doctype html><html itemscope itemtype=http://schema.org/WebPage lang=en>
 <head>
-<meta name=generator content="Hugo 0.88.1">
+<meta name=generator content="Hugo 0.89.2">
 <meta charset=utf-8>
 <meta name=viewport content="width=device-width,initial-scale=1">
 <meta name=description content="Tout ce que vous ne pensiez pas devoir savoir sur Docker mais tant pis pour vous, fallait pas demander.
@@ -67,25 +67,27 @@ Github Profile
 <main class="gblog-page container">
 <article class=gblog-post>
 <header class=gblog-post__header>
-<h1><a href=/posts/buildx_telemetry/>Docker build telemetry</a></h1>
+<h1><a href=/posts/build_101/>Docker buil 101</a></h1>
 </header>
 <section class=gblog-markdown>
-Garde toujours tes amis près de toi et tes enemis, encore plus près.
-&ndash; Al Pacino
-Comme beaucoup d&rsquo;entre vous, j&rsquo;ai pesté devant un docker build qui télécharge pour la 101ème fois les mêmes dépendances lors d&rsquo;un apt install ou d&rsquo;un npm install après avoir ajouté une ligne dans mon package.json.
+Comme beaucoup d&rsquo;entre vous, j&rsquo;ai pesté devant un docker build qui télécharge pour la 101ème fois les mêmes paquets apt install .
+Plutôt que de continuer à subir, je vous propose une série d&rsquo;articles de mieux comprendre docker build et d&rsquo;explorer quelques pistes pour le rendre plus efficace.
+Pour ce premier article, nous allons commencer par les bases.
+back to basics Un image Docker est une succession de &ldquo;couches&rdquo; (layers) chacune représentant des modifications apportées au système de fichier.
 </section>
 <div class=gblog-post__readmore>
+<a class="flex-inline align-center fake-link" title="Read full post" href=/posts/build_101/>Read full post</a>
 </div>
 <footer class=gblog-post__footer>
 <span class=no-wrap><svg class="icon gblog_date"><use xlink:href="#gblog_date"/></svg>
 <span class=gblog-post__tag>
-<time datetime=2021-10-22T14:27:57+02:00>
-Oct 22, 2021
+<time datetime=2021-11-09T14:47:59+01:00>
+Nov 9, 2021
 </time>
 </span>
 </span>
 <span class=no-wrap><svg class="icon gblog_timer"><use xlink:href="#gblog_timer"/></svg>
-<span class=gblog-post__tag>1 min read</span>
+<span class=gblog-post__tag>4 min read</span>
 </span>
 <span class=no-wrap><svg class="icon gblog_bookmarks"><use xlink:href="#gblog_bookmarks"/></svg>
 <span class="gblog-post__tag gblog-button">
