@@ -1,10 +1,10 @@
-<?xml version="1.0" encoding="utf-8"?><feed xmlns="http://www.w3.org/2005/Atom" xml:lang="en"><generator uri="https://gohugo.io/" version="0.89.2">Hugo</generator><title type="html">Build on Quoi d'neuf Docker?</title><link href="https://hugo-geekblog.geekdocs.de/tags/build/" rel="alternate" type="text/html" title="HTML"/><link href="https://hugo-geekblog.geekdocs.de/tags/build/feed.xml" rel="self" type="application/atom+xml" title="Atom"/><link href="https://hugo-geekblog.geekdocs.de/tags/build/feed.json" rel="alternate" type="application/json" title="Json"/><updated>2021-11-09T13:48:26+00:00</updated><author><name>Nicolas De Loof</name><email>nicolas.deloof@gmail.com</email></author><id>https://hugo-geekblog.geekdocs.de/tags/build/</id><entry><title type="html">Docker buil 101</title><link href="https://hugo-geekblog.geekdocs.de/posts/build_101/?utm_source=atom_feed" rel="alternate" type="text/html" hreflang="en"/><id>https://hugo-geekblog.geekdocs.de/posts/build_101/</id><published>2021-11-09T12:12:00+02:00</published><updated>2021-11-09T14:47:59+01:00</updated><content type="html"><![CDATA[<p>Comme beaucoup d&rsquo;entre vous, j&rsquo;ai pesté devant un <code>docker build</code> qui télécharge pour la 101ème fois les mêmes paquets <code>apt install</code> .</p>
+<?xml version="1.0" encoding="utf-8"?><feed xmlns="http://www.w3.org/2005/Atom" xml:lang="en"><generator uri="https://gohugo.io/" version="0.89.2">Hugo</generator><title type="html">Build on Quoi d'neuf Docker?</title><link href="https://quoidneufdocker.fr/tags/build/" rel="alternate" type="text/html" title="HTML"/><link href="https://quoidneufdocker.fr/tags/build/feed.xml" rel="self" type="application/atom+xml" title="Atom"/><link href="https://quoidneufdocker.fr/tags/build/feed.json" rel="alternate" type="application/json" title="Json"/><updated>2021-11-09T13:59:43+00:00</updated><author><name>Nicolas De Loof</name><email>nicolas.deloof@gmail.com</email></author><id>https://quoidneufdocker.fr/tags/build/</id><entry><title type="html">Docker buil 101</title><link href="https://quoidneufdocker.fr/posts/build_101/?utm_source=atom_feed" rel="alternate" type="text/html" hreflang="en"/><id>https://quoidneufdocker.fr/posts/build_101/</id><published>2021-11-09T12:12:00+02:00</published><updated>2021-11-09T14:47:59+01:00</updated><content type="html"><![CDATA[<p>Comme beaucoup d&rsquo;entre vous, j&rsquo;ai pesté devant un <code>docker build</code> qui télécharge pour la 101ème fois les mêmes paquets <code>apt install</code> .</p>
 <p>Plutôt que de continuer à subir, je vous propose une série d&rsquo;articles de mieux comprendre <code>docker build</code> et d&rsquo;explorer quelques pistes pour le rendre plus efficace.</p>
 <p>Pour ce premier article, nous allons commencer par les bases.</p>
 <div class="gblog-post__anchorwrap">
     <h2 id="back-to-basics">
         back to basics
-        <a data-clipboard-text="https://hugo-geekblog.geekdocs.de/posts/build_101/#back-to-basics" class="gblog-post__anchor gblog-post__anchor--right clip" aria-label="Anchor back to basics" href="#back-to-basics">
+        <a data-clipboard-text="https://quoidneufdocker.fr/posts/build_101/#back-to-basics" class="gblog-post__anchor gblog-post__anchor--right clip" aria-label="Anchor back to basics" href="#back-to-basics">
             <svg class="icon gblog_link"><use xlink:href="#gblog_link"></use></svg>
         </a>
     </h2>
@@ -14,7 +14,7 @@
 <div class="gblog-post__anchorwrap">
     <h2 id="apt-quoi">
         apt-quoi?
-        <a data-clipboard-text="https://hugo-geekblog.geekdocs.de/posts/build_101/#apt-quoi" class="gblog-post__anchor gblog-post__anchor--right clip" aria-label="Anchor apt-quoi?" href="#apt-quoi">
+        <a data-clipboard-text="https://quoidneufdocker.fr/posts/build_101/#apt-quoi" class="gblog-post__anchor gblog-post__anchor--right clip" aria-label="Anchor apt-quoi?" href="#apt-quoi">
             <svg class="icon gblog_link"><use xlink:href="#gblog_link"></use></svg>
         </a>
     </h2>
@@ -31,7 +31,7 @@ RUN apt update &amp;&amp; apt install machin bidule chose
 <div class="gblog-post__anchorwrap">
     <h2 id="tes-là-où-tes-pas-là">
         t&rsquo;es là où t&rsquo;es pas là?
-        <a data-clipboard-text="https://hugo-geekblog.geekdocs.de/posts/build_101/#tes-là-où-tes-pas-là" class="gblog-post__anchor gblog-post__anchor--right clip" aria-label="Anchor t&rsquo;es là où t&rsquo;es pas là?" href="#tes-l%c3%a0-o%c3%b9-tes-pas-l%c3%a0">
+        <a data-clipboard-text="https://quoidneufdocker.fr/posts/build_101/#tes-là-où-tes-pas-là" class="gblog-post__anchor gblog-post__anchor--right clip" aria-label="Anchor t&rsquo;es là où t&rsquo;es pas là?" href="#tes-l%c3%a0-o%c3%b9-tes-pas-l%c3%a0">
             <svg class="icon gblog_link"><use xlink:href="#gblog_link"></use></svg>
         </a>
     </h2>
@@ -54,7 +54,7 @@ eof
 </code></pre><div class="gblog-post__anchorwrap">
     <h2 id="cache-invalidation">
         cache invalidation
-        <a data-clipboard-text="https://hugo-geekblog.geekdocs.de/posts/build_101/#cache-invalidation" class="gblog-post__anchor gblog-post__anchor--right clip" aria-label="Anchor cache invalidation" href="#cache-invalidation">
+        <a data-clipboard-text="https://quoidneufdocker.fr/posts/build_101/#cache-invalidation" class="gblog-post__anchor gblog-post__anchor--right clip" aria-label="Anchor cache invalidation" href="#cache-invalidation">
             <svg class="icon gblog_link"><use xlink:href="#gblog_link"></use></svg>
         </a>
     </h2>
@@ -77,10 +77,10 @@ RUN mvn package
 <div class="gblog-post__anchorwrap">
     <h2 id="to-be-continued">
         to be continued&hellip;
-        <a data-clipboard-text="https://hugo-geekblog.geekdocs.de/posts/build_101/#to-be-continued" class="gblog-post__anchor gblog-post__anchor--right clip" aria-label="Anchor to be continued&hellip;" href="#to-be-continued">
+        <a data-clipboard-text="https://quoidneufdocker.fr/posts/build_101/#to-be-continued" class="gblog-post__anchor gblog-post__anchor--right clip" aria-label="Anchor to be continued&hellip;" href="#to-be-continued">
             <svg class="icon gblog_link"><use xlink:href="#gblog_link"></use></svg>
         </a>
     </h2>
 </div><p>On va en rester là pour ce premier article, il reste beaucoup à dire, mais on va prendre le temps de s&rsquo;attaquer a chaque sujet séparément.<br>
 A+</p>
-]]></content><category scheme="https://hugo-geekblog.geekdocs.de/tags/build" term="build" label="Build"/></entry></feed>
+]]></content><category scheme="https://quoidneufdocker.fr/tags/build" term="build" label="Build"/></entry></feed>
